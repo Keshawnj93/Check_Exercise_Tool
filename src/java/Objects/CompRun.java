@@ -35,7 +35,7 @@ public class CompRun {
     }
     
     public String write(){
-        
+        return "";
     }
     
     public String compile(String fileName, String code, String sampleIn){
