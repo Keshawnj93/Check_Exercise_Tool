@@ -1,6 +1,10 @@
 package Objects;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -35,7 +39,42 @@ public class CompRun {
     }
     
     public String write(){
-        return "";
+        FileWriter fw = null;
+        BufferedWriter bw = null;
+        String pathToWrite = "src/" + filePath + fileName + ".java";
+        
+        try{
+            fw = new FileWriter(pathToWrite);
+            bw = new BufferedWriter(fw);
+            //Package name added to code
+            code = "package temp;\r\n" + code;
+            bw.write(code);
+        } catch(IOException e){
+            try{
+                if (bw != null){
+                    bw.close();
+                }
+                if (fw != null){
+                    fw.close();
+                }
+            } catch(IOException x){
+                //
+            }
+            return "Error writing file:\n" + e.toString();
+        } finally{
+            try{
+                if (bw != null){
+                    bw.close();
+                }
+                if (fw != null){
+                    fw.close();
+                }
+            } catch(IOException x){
+                //
+            }
+        }
+        
+        return "File was written successfully";
     }
     
     public String compile(String fileName, String code, String sampleIn){
@@ -50,7 +89,7 @@ public class CompRun {
         try{
             Process pro = Runtime.getRuntime().exec(command);
             if (hasError(pro.getErrorStream())){
-                setMessage(pro.getErrorStream(), "output");
+                //setMessage(pro.getErrorStream(), "output");
                 //setMessage(pro.getErrorStream(), "errStream");
                 pro.waitFor();
                 return "The program could not be compiled\n" + errStream;
@@ -61,8 +100,13 @@ public class CompRun {
                 return "Program compiled successfully";
             }
         } catch (Exception e){
-                return "Errot compiling file";
+                return "Error compiling file";
         }
+    }
+    
+    public String run(String fileName){
+        this.fileName = fileName;
+        return run();
     }
     
     public String run(){
@@ -84,6 +128,17 @@ public class CompRun {
         } catch (Exception e){
                 return "Error compiling file";
         }
+    }
+    
+    public String delete(String fileName){
+        this.fileName = fileName;
+        return delete();
+    }
+    
+    public String delete(){
+        String fileToDelete = "src/" + filePath + fileName;
+        File file = new File(fileToDelete);
+        return (file.delete()) ? "File deleted successfully" : "File could not be deleted";
     }
     
     private void setMessage(InputStream ins, String type) 
