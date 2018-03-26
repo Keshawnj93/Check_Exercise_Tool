@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html">
     <h:head>
-        <title>Facelet Title</title>
+        <title>Check Exercise Tool</title>
         <style type="text/css">
             .container {
                 width: 98%;
@@ -34,37 +34,55 @@
                 margin: 3px auto;
                 
             }
+            
+            .input-container {
+                height:40px;
+                display:block;
+            }
+            
         </style>
         
-
+        
+        <script src="helperScripts.js" type="text/javascript" charset="utf-8"></script>
     </h:head>
     <h:body>
         <div id="title" class="container centered-text">
             CheckExercise: Exercise01_01.Java
         </div>
         <div class="container yellow-border centered-text">
-            Choose a chapter: <select><option>Chapter 1</option><option>Chapter 2</option><option>Chapter 3</option></select> Choose an exercise: <select><option>Chapter 1</option><option>Chapter 2</option><option>Chapter 3</option></select>
+            Choose a chapter: <select id="chapterMenu" onchange="updateMenu()"></select> Choose an exercise: <select id="exerciseMenu"><option>Chapter 1</option><option>Chapter 2</option><option>Chapter 3</option></select>
             <button class="blue-button">
                 Set Exercise
             </button>
         </div>
         
-            
+        <form>
+            <input type="hidden" id="editorContents" value="" />    
+        </form>
         <div id="editor" class="editor-container yellow-border">//enter your code here</div>
         
+            
+        <textarea class="yellow-border input-container container"></textarea>
+        
         <div class="container">
-            <button class="blue-button">
-            Compile/run
+            
+            <button class="blue-button" onclick="updateEditorContents()">
+                Compile/run
             </button>
             <button class="blue-button">
                 Automatic Check
             </button>
+            
+                
+           
         </div>
-        <script src="ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js" type="text/javascript" charset="utf-8"></script>
         <script>
+            buildChapterMenu();
+            updateMenu();
             var editor = ace.edit("editor");
-            editor.setTheme("ace/theme/monokai");
-            editor.session.setMode("mode-java.js");
+            editor.setTheme("ace/theme/github");
+            editor.getSession().setMode("ace/mode/java");
         </script>
     </h:body>
 </html>
