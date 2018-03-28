@@ -10,6 +10,8 @@ import java.io.InputStreamReader;
 
 public class CompRun {
     String filePath, fileName, code, sampleIn, errStream, output;
+    final int EXECUTION_TIME_ALLOWED = 1000, EXECUTION_TIME_INTERVAL = 100;
+    boolean isInfiniteLoop = false;
     
     //Constructors
     public CompRun(){
@@ -47,7 +49,7 @@ public class CompRun {
             fw = new FileWriter(pathToWrite);
             bw = new BufferedWriter(fw);
             //Package name added to code
-            code = "package temp;\r\n" + code;
+            code = "package temp; " + code;
             bw.write(code);
         } catch(IOException e){
             try{
@@ -109,10 +111,11 @@ public class CompRun {
         return run();
     }
     
-    public String run(){
+    public String run(int dummy){
         String command = "java -cp src " + filePath + fileName;
         try{
             Process pro = Runtime.getRuntime().exec(command);
+            
             if (hasError(pro.getErrorStream())){
                 //setMessage(pro.getErrorStream(), "errStream");
                 //setMessage(pro.getErrorStream(), "errStream");
@@ -126,8 +129,82 @@ public class CompRun {
                 return output;
             }
         } catch (Exception e){
-                return "Error compiling file";
+                return "Error running file";
         }
+    }
+    
+    public String run(){
+        ProcessBuilder pb;
+        pb = new ProcessBuilder("java", fileName);
+        pb.directory(new File("C:\\Users\\Keshawn\\Documents\\NetBeansProjects\\Check_Exercise_Tool\\src\\temp" /*+ filePath*/));
+        pb.redirectErrorStream(true);
+        pb.inheritIO();
+        
+        //If an input file was created, use that input for the program
+        if (new File("src/" + filePath + fileName + "Input.txt").exists()){
+            pb.redirectInput(ProcessBuilder.Redirect.from(new File("src/" + filePath + fileName + "Input.txt")));
+        }
+        
+        pb.redirectOutput(ProcessBuilder.Redirect.to(new File("src/" + filePath + fileName + "Output.txt")));
+        
+        Process pro = null;
+        
+        try{
+            pro = pb.start();
+        } catch (Exception e){
+            errStream = e.getMessage();
+            return "There was an error starting Process pro";
+        }
+        
+        //Destroy thread if taking too long
+        final Process pro1 = pro;
+        new Thread(){
+            @Override
+            public void run(){
+                int sleepTime = 0;
+                boolean isFinished = false;
+                while(sleepTime <= EXECUTION_TIME_ALLOWED && !isFinished){
+                    
+                    try {
+                        
+                        try {
+                            Thread.sleep(EXECUTION_TIME_INTERVAL);
+                        } catch (Exception e){
+                            errStream = e.getMessage();
+                        }
+                        
+                        sleepTime += EXECUTION_TIME_INTERVAL;
+                        isFinished = true;
+                        
+                    } catch (IllegalThreadStateException e){
+                        errStream = e.getMessage();
+                    }
+                }
+                
+                if (!isFinished){
+                    pro1.destroy();
+                    isInfiniteLoop = true;
+                }
+            }
+        }.start();
+        try{
+            if (!isInfiniteLoop){
+                if (hasError(pro.getErrorStream())){
+                    pro.waitFor();
+                    return "RunTime Error:\n" + errStream;
+                }
+                
+                else {
+                    setMessage(pro.getInputStream(), "output");
+                    pro.waitFor();
+                    return output;
+                }
+            }
+        } catch (Exception e){
+            return "Error running file";
+        }
+        
+        return "Unexpected Error";
     }
     
     public String delete(String fileName){
