@@ -48,6 +48,7 @@ public class CompRun {
         try{
             fw = new FileWriter(pathToWrite);
             bw = new BufferedWriter(fw);
+            
             //Package name added to code
             code = "package temp; " + code;
             bw.write(code);
@@ -111,32 +112,74 @@ public class CompRun {
         return run();
     }
     
-    public String run(int dummy){
+    public String run(){
         String command = "java -cp src " + filePath + fileName;
         try{
             Process pro = Runtime.getRuntime().exec(command);
             
+            //Destroy thread if taking too long
+            final Process pro1 = pro;
+            new Thread(){
+                @Override
+                public void run(){
+                    int sleepTime = 0;
+                    boolean isFinished = false;
+                    while(sleepTime <= EXECUTION_TIME_ALLOWED && !isFinished){
+                    
+                        try {
+                        
+                            try {
+                                Thread.sleep(EXECUTION_TIME_INTERVAL);
+                            } catch (Exception e){
+                                errStream = e.getMessage();
+                            }
+                        
+                            sleepTime += EXECUTION_TIME_INTERVAL;
+                            pro.exitValue();
+                            isFinished = true;
+                        
+                        } catch (IllegalThreadStateException e){
+                            errStream = e.getMessage();
+                        }
+                    }
+                
+                    if (!isFinished){
+                        pro1.destroy();
+                        isInfiniteLoop = true;
+                        output = "Error: Infinite loop detected\n";
+                    }
+                }
+            }.start();
+            
+            //If sample input is needed, load it into the OutputStream
+            if (!sampleIn.isEmpty()){
+                pro.getOutputStream().write(sampleIn.getBytes("UTF-8"));
+                pro.getOutputStream().close();
+            }
+            
+            //If an error exists, return the error
             if (hasError(pro.getErrorStream())){
-                //setMessage(pro.getErrorStream(), "errStream");
-                //setMessage(pro.getErrorStream(), "errStream");
                 pro.waitFor();
                 return "RunTime Error:\n" + errStream;
             }
             
+            //Return the InputStream (stdout) of the program
             else{
                 setMessage(pro.getInputStream(), "output");
                 pro.waitFor();
                 return output;
             }
         } catch (Exception e){
-                return "Error running file";
+            errStream = e.getMessage();
+            return "Error running file";
         }
     }
     
+    /* This run method doesn't work. Will be deleted soon
     public String run(){
         ProcessBuilder pb;
         pb = new ProcessBuilder("java", fileName);
-        pb.directory(new File("C:\\Users\\Keshawn\\Documents\\NetBeansProjects\\Check_Exercise_Tool\\src\\temp" /*+ filePath*/));
+        pb.directory(new File("C:\\Users\\Keshawn\\Documents\\NetBeansProjects\\Check_Exercise_Tool\\src\\temp" /*+ filePath));
         pb.redirectErrorStream(true);
         pb.inheritIO();
         
@@ -206,6 +249,7 @@ public class CompRun {
         
         return "Unexpected Error";
     }
+    */
     
     public String delete(String fileName){
         this.fileName = fileName;
@@ -237,7 +281,6 @@ public class CompRun {
             output = output.substring(0, output.length() - 1);
         }
     }
-    
     
     private boolean hasError(InputStream ins) throws Exception{
         String line = null;
@@ -283,5 +326,21 @@ public class CompRun {
     
     public void setSampleIn(String s){
         sampleIn = s;
+    }
+    
+    public String getErrStream(){
+        return errStream;
+    }
+    
+    public void setErrStream(String s){
+        errStream = s;
+    }
+    
+    public String getOutput(){
+        return output;
+    }
+    
+    public void setOutput(String s){
+        output = s;
     }
 }
