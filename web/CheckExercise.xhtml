@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html">
     <h:head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <title>Check Exercise Tool</title>
         <style type="text/css">
             .container {
@@ -46,6 +47,7 @@
         <script src="helperScripts.js" type="text/javascript" charset="utf-8"></script>
     </h:head>
     <h:body>
+        <h:form id="form">
         <div id="title" class="container centered-text">
             CheckExercise: Exercise01_01.Java
         </div>
@@ -56,33 +58,42 @@
             </button>
         </div>
         
-        <form>
-            <input type="hidden" id="editorContents" value="" />  
-        </form>
-        <div id="editor" class="editor-container yellow-border" value="#{CheckExerciseBean.code}">//enter your code here</div>
+        <div id="editor" class="editor-container yellow-border">#{checkExerciseBean.code}</div>
         
             
-        <textarea class="yellow-border input-container container"></textarea>
+        <h:inputTextarea class="yellow-border input-container container" value="#{checkExerciseBean.sampleInput}"/>
         
         <div class="container">
-            
-            <button class="blue-button" onclick="updateEditorContents()">
-                Compile/run
-            </button>
-            <button class="blue-button">
-                Automatic Check
-            </button>
-            
+        
+                <h:commandButton class="blue-button" action="#{checkExerciseBean.compileAndRun()}" value="Compile/Run" />
+                <!-- Compile/run
+                </button> -->
+                <button class="blue-button">
+                    Automatic Check
+                </button>
+         
+                <h:inputTextarea class="yellow-border input-container container" readonly="true" value ="#{checkExerciseBean.output}"/>
                 
-           
+                <h:inputTextarea id="sourceInputTextarea" rendered ="true" required="true"
+                                 value="#{checkExerciseBean.code}" style="display: none;"></h:inputTextarea> 
+                  
         </div>
+        </h:form>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js" type="text/javascript" charset="utf-8"></script>
         <script>
             buildChapterMenu();
             updateMenu();
+            var textarea = document.getElementById('form:sourceInputTextarea');
             var editor = ace.edit("editor");
             editor.setTheme("ace/theme/github");
             editor.getSession().setMode("ace/mode/java");
+            
+            editor.getSession().on('change', function() {
+                var code = editor.getSession().getValue()
+                textarea.value = code;
+            });
+            
+            //textarea.val(editor.getSession().getValue());
         </script>
     </h:body>
 </html>
