@@ -1,0 +1,1 @@
+Please place the folder ags10e in directory C:/ (on Windows) in order to properly use this web application.

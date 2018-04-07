@@ -64,7 +64,7 @@ public class CompRun {
             } catch(IOException x){
                 //
             }
-            return "Error writing file:<br/>" + e.toString();
+            return "Error writing file:\r\n" + e.toString();
         } finally{
             try{
                 if (bw != null){
@@ -96,7 +96,7 @@ public class CompRun {
                 //setMessage(pro.getErrorStream(), "output");
                 //setMessage(pro.getErrorStream(), "errStream");
                 pro.waitFor();
-                return "The program could not be compiled<br/>" + errStream;
+                return "The program could not be compiled\r\n" + errStream;
             }
             
             else{
@@ -150,7 +150,7 @@ public class CompRun {
                     if (!isFinished){
                         pro1.destroy();
                         isInfiniteLoop = true;
-                        output = "Error: Infinite loop detected<br/>";
+                        output = "Error: Infinite loop detected\r\n";
                     }
                 }
             }.start();
@@ -164,7 +164,7 @@ public class CompRun {
             //If an error exists, return the error
             if (hasError(pro.getErrorStream())){
                 pro.waitFor();
-                return "RunTime Error:<br>" + errStream;
+                return "RunTime Error:\r\n" + errStream;
             }
             
             //Return the InputStream (stdout) of the program
