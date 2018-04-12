@@ -66,9 +66,10 @@
         
         <div id="editor" class="editor-container yellow-border">#{checkExerciseBean.code}</div>
         
+        <div class="inputFields" style="#{checkExerciseBean.style}">
         <h:outputLabel class="container input-container-label" value="Enter input data for the program (Sample data provided below. You may modify it.)"/>
         <h:inputTextarea class="yellow-border input-container container" value="#{checkExerciseBean.sampleInput}"/>
-        
+        </div>
         <div class="container">
         <br />
                 <h:commandButton class="blue-button" action="#{checkExerciseBean.compileAndRun()}" value="Compile/Run" />

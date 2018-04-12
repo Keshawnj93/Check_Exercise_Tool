@@ -1,23 +1,24 @@
 package Beans;
 
 import javax.inject.Named;
-import javax.faces.bean.ManagedBean;
 import Objects.*;
+import java.io.Serializable;
 import java.util.ArrayList;
-import javax.faces.bean.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 
 @Named(value = "checkExerciseBean")
-@ManagedBean
-@RequestScoped
-public class CheckExerciseBean {
+@SessionScoped
+public class CheckExerciseBean implements Serializable {
 
     String chapter, exercise, code, sampleInput, output;
     Boolean visible;
+    private String style;
 
     public CheckExerciseBean() {
         exercise = code = sampleInput = "";
         exercise = "Exercise01_01";
         chapter = "Chapter 1";
+        style="display:none;";
         //changeExercise();
     }
 
@@ -66,7 +67,7 @@ public class CheckExerciseBean {
                 //Write file. If successful, continue
                 if ((s = c.write()).equals("File was written successfully")) {
                     output = s;
-                    
+
                     //Compile file. If successful, continue
                     if ((s = c.compile()).equals("Program compiled successfully")) {
 
@@ -83,9 +84,7 @@ public class CheckExerciseBean {
                         if (e.getDescription().contains("This exercise can be compiled and submitted, but cannot be run and automatically graded")) {
                             output = "This program cannot be automatically graded, but has compiled and run successfully";
                             return;
-                        } 
-
-                        //Program ran successfully. Diff check
+                        } //Program ran successfully. Diff check
                         else {
                             DiffChecker d = new DiffChecker(exercise, output);
                             String expected = outputs.get(0).toString();
@@ -95,14 +94,12 @@ public class CheckExerciseBean {
                             if (d.hasDiff(output, expected)) {
                                 output = format("Your program is incorrect\r\n\r\nYour Output\r\n" + output
                                         + "\r\n\r\nExpected Output\r\n" + expected);
-                            } 
-
-                            //Program is correct
+                            } //Program is correct
                             else {
                                 output = "Your program is correct";
                             }
                         }
-                        
+
                         //Delete the .java and .class files created
                         c.delete(exercise + ".java");
                         c.delete(exercise + ".class");
@@ -116,9 +113,7 @@ public class CheckExerciseBean {
                     output = s;
                 }
             }
-        } 
-
-        //Input required. Multiple runs needed 
+        } //Input required. Multiple runs needed 
         else {
             String sampleIn = sampleInput;
             for (String in : e.getInput()) {
@@ -161,7 +156,7 @@ public class CheckExerciseBean {
                                 output = "Your program is correct";
                             }
                         }
-                        
+
                         //Delete the .java and .class files created
                         c.delete(exercise + ".java");
                         c.delete(exercise + ".class");
@@ -175,7 +170,7 @@ public class CheckExerciseBean {
                     output = s;
                 }
             }
-            
+
             sampleInput = sampleIn;
         }
     }
@@ -201,10 +196,13 @@ public class CheckExerciseBean {
             sampleInput = "";
             for (String s : e.getInput()) {
                 //Avoid putting space on first input
-                if (sampleInput.isEmpty()){
+                if (sampleInput.isEmpty()) {
                     sampleInput = s;
+                    style = "display:none;";
+                } else {
+                    sampleInput += " " + s;
+                    style="";
                 }
-                else sampleInput += " " + s;
             }
         }
     }
@@ -259,5 +257,19 @@ public class CheckExerciseBean {
 
     public void setVisible(Boolean b) {
         visible = b;
+    }
+
+    /**
+     * @return the style
+     */
+    public String getStyle() {
+        return style;
+    }
+
+    /**
+     * @param style the style to set
+     */
+    public void setStyle(String style) {
+        this.style = style;
     }
 }
