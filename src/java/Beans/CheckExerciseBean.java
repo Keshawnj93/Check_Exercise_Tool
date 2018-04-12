@@ -4,10 +4,12 @@ import javax.inject.Named;
 import Objects.*;
 import java.io.Serializable;
 import java.util.ArrayList;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
 
 @Named(value = "checkExerciseBean")
-@SessionScoped
+@ManagedBean
+@RequestScoped
 public class CheckExerciseBean implements Serializable {
 
     String chapter, exercise, code, sampleInput, output;
@@ -198,12 +200,13 @@ public class CheckExerciseBean implements Serializable {
                 //Avoid putting space on first input
                 if (sampleInput.isEmpty()) {
                     sampleInput = s;
-                    style = "display:none;";
                 } else {
-                    sampleInput += " " + s;
-                    style="";
+                    sampleInput += " " + s; 
                 }
             }
+            
+            if (sampleInput.isEmpty()) style = "display:none;";
+            else style="";
         }
     }
 

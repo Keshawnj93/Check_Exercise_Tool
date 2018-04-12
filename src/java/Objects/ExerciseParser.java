@@ -70,7 +70,7 @@ public class ExerciseParser {
                
                //Remove last trailing space, if applicable
                if (!in.isEmpty()){
-                   in = in.substring(0, in.length() - 1);
+//                   in = in.substring(0, in.length() - 1);
                }
                
                input.add(in);
