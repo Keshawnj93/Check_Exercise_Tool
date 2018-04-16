@@ -73,7 +73,26 @@ public class test {
 //        }
         //DiffChecker d = new DiffChecker("Exercise02_16");
         CheckExerciseBean b = new CheckExerciseBean();
-        b.setExercise("Exercise04_02");
-        b.changeExercise();
+        b.setExercise("Exercise02_02");
+        b.setCode("import java.util.Scanner;\r\n" +
+"\r\n" +
+"public class Exercise02_02 {\r\n" +
+"  public static void main(String[] args) {\r\n" +
+"    Scanner input = new Scanner(System.in);\r\n" +
+"\r\n" +
+"    // Enter radius of the cylinder\r\n" +
+"    System.out.print(\"Enter the radius and length of a cylinder: \");\r\n" +
+"    double radius = input.nextDouble();\r\n" +
+"    double length = input.nextDouble();\r\n" +
+"\r\n" +
+"    double area = radius * radius * 30.14159;\r\n" +
+"    double volume = area * length;\r\n" +
+"\r\n" +
+"    System.out.println(\"The area is \" + area);\r\n" +
+"    System.out.println(\"The volume of the cylinder is \" + volume);\r\n" +
+"  }\r\n" +
+"}");
+        b.automaticCheck();
+        System.out.println(b.getOutput());
     }
 }
