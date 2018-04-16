@@ -14,20 +14,27 @@ public class CheckExerciseBean implements Serializable {
 
     String chapter, exercise, code, sampleInput, output;
     Boolean visible;
-    private String style;
+    private String inputStyle;
+    private String outputStyle;
 
     public CheckExerciseBean() {
         exercise = code = sampleInput = "";
         exercise = "Exercise01_01";
         chapter = "Chapter 1";
-        style="display:none;";
+        
+        //Hide the input and output box originally
+        inputStyle="display:none;";
+        outputStyle="display:none;";
         //changeExercise();
     }
 
     public void compileAndRun() {
         CompRun c = new CompRun(exercise, code, sampleInput);
         String s;
-
+        
+        //show the output
+        setOutputStyle("");
+        
         //Write file. If successful, continue
         if ((s = c.write()).equals("File was written successfully")) {
             output = s;
@@ -58,6 +65,10 @@ public class CheckExerciseBean implements Serializable {
         e.setValues();
         ArrayList outputs = e.getOutput();
 
+        //show the output
+        setOutputStyle("");
+        
+        
         //No input required. Only one run needed
         if (e.getInput().isEmpty() || e.getInput() == null) {
             CompRun c = new CompRun(exercise, code, sampleInput);
@@ -69,7 +80,7 @@ public class CheckExerciseBean implements Serializable {
                 //Write file. If successful, continue
                 if ((s = c.write()).equals("File was written successfully")) {
                     output = s;
-
+                    
                     //Compile file. If successful, continue
                     if ((s = c.compile()).equals("Program compiled successfully")) {
 
@@ -86,7 +97,9 @@ public class CheckExerciseBean implements Serializable {
                         if (e.getDescription().contains("This exercise can be compiled and submitted, but cannot be run and automatically graded")) {
                             output = "This program cannot be automatically graded, but has compiled and run successfully";
                             return;
-                        } //Program ran successfully. Diff check
+                        } 
+
+                        //Program ran successfully. Diff check
                         else {
                             DiffChecker d = new DiffChecker(exercise, output);
                             String expected = outputs.get(0).toString();
@@ -94,14 +107,22 @@ public class CheckExerciseBean implements Serializable {
 
                             //If there is a difference, notify the user
                             if (d.hasDiff(output, expected)) {
+                                
+                                //Test
+                                c.setCode(e.getCorrectAnswer(exercise));
+                                c.setOutput("");
+                                
+                                c.write(); c.compile();
                                 output = format("Your program is incorrect\r\n\r\nYour Output\r\n" + output
-                                        + "\r\n\r\nExpected Output\r\n" + expected);
-                            } //Program is correct
+                                        + "\r\n\r\nExpected Output\r\n" + c.run());
+                            } 
+
+                            //Program is correct
                             else {
                                 output = "Your program is correct";
                             }
                         }
-
+                        
                         //Delete the .java and .class files created
                         c.delete(exercise + ".java");
                         c.delete(exercise + ".class");
@@ -115,7 +136,9 @@ public class CheckExerciseBean implements Serializable {
                     output = s;
                 }
             }
-        } //Input required. Multiple runs needed 
+        } 
+
+        //Input required. Multiple runs needed 
         else {
             String sampleIn = sampleInput;
             for (String in : e.getInput()) {
@@ -147,18 +170,26 @@ public class CheckExerciseBean implements Serializable {
                             DiffChecker d = new DiffChecker(exercise, output);
                             String expected = outputs.get(0).toString();
                             outputs.remove(0);
+                            
+
 
                             //If there is a difference, notify the user
                             if (d.hasDiff(output, expected)) {
+                                
+                                //Test
+                                c.setCode(e.getCorrectAnswer(exercise));
+                                c.setOutput("");
+                                
+                                c.write(); c.compile();
                                 output = format("Your program is incorrect\r\n\r\nYour Output\r\n" + output
-                                        + "\r\n\r\nExpected Output\r\n" + expected);
+                                        + "\r\n\r\nExpected Output\r\n" + c.run());
                                 break;
                             } //Program is correct
                             else {
                                 output = "Your program is correct";
                             }
                         }
-
+                        
                         //Delete the .java and .class files created
                         c.delete(exercise + ".java");
                         c.delete(exercise + ".class");
@@ -172,12 +203,17 @@ public class CheckExerciseBean implements Serializable {
                     output = s;
                 }
             }
-
+            
             sampleInput = sampleIn;
+
         }
     }
 
     public void changeExercise() {
+        //Hide output
+        setOutputStyle("display:none;");
+        
+        
         ExerciseParser e = new ExerciseParser(exercise);
         e.setValues();
 
@@ -205,8 +241,8 @@ public class CheckExerciseBean implements Serializable {
                 }
             }
             
-            if (sampleInput.isEmpty()) style = "display:none;";
-            else style="";
+            if (sampleInput.isEmpty()) setInputStyle("display:none;");
+            else setInputStyle("");
         }
     }
 
@@ -263,16 +299,31 @@ public class CheckExerciseBean implements Serializable {
     }
 
     /**
-     * @return the style
+     * @return the inputStyle
      */
-    public String getStyle() {
-        return style;
+    public String getInputStyle() {
+        return inputStyle;
     }
 
     /**
-     * @param style the style to set
+     * @param inputStyle the inputStyle to set
      */
-    public void setStyle(String style) {
-        this.style = style;
+    public void setInputStyle(String inputStyle) {
+        this.inputStyle = inputStyle;
     }
+
+    /**
+     * @return the outputStyle
+     */
+    public String getOutputStyle() {
+        return outputStyle;
+    }
+
+    /**
+     * @param outputStyle the outputStyle to set
+     */
+    public void setOutputStyle(String outputStyle) {
+        this.outputStyle = outputStyle;
+    }
+
 }

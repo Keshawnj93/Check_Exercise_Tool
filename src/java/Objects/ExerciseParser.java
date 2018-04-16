@@ -120,6 +120,27 @@ public class ExerciseParser {
         }
     }
     
+    public String getCorrectAnswer(String exercise){
+        BufferedReader br;
+        String s, ret = "";
+        //Set Exersise Description
+        String dir = "C:\\ags10e\\correctanswers\\";
+        String path = dir + exercise + ".txt"; 
+        try{
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
+            while((s = br.readLine()) != null){
+                ret += s + "\r\n";
+            }
+            
+            br.close();
+        } catch (Exception e){
+            //e.printStackTrace();
+        }
+        
+        return ret;
+    }
+
+    
     public String getExercise(){
         return exercise;
     }

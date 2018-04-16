@@ -66,7 +66,7 @@
         
         <div id="editor" class="editor-container yellow-border">#{checkExerciseBean.code}</div>
         
-        <div class="inputFields" style="#{checkExerciseBean.style}">
+        <div class="inputFields" style="#{checkExerciseBean.inputStyle}">
         <h:outputLabel class="container input-container-label" value="Enter input data for the program (Sample data provided below. You may modify it.)"/>
         <h:inputTextarea class="yellow-border input-container container" value="#{checkExerciseBean.sampleInput}"/>
         </div>
@@ -78,8 +78,9 @@
         </div>
         
         <h:outputLabel class="container input-container-label" value="Program output will be displayed below"/>
+        <div class="outputField" style="#{checkExerciseBean.outputStyle}">
         <h:inputTextarea class="yellow-border input-container container" onmouseover="textAreaAdjust(this)" style="background-color:lightgray; overflow: hidden" readonly="true" value ="#{checkExerciseBean.output}"/>
-                
+        </div>       
                 <!-- Hidden values for setting bean -->
                 <h:inputTextarea id="sourceInputTextarea" rendered ="true" value="#{checkExerciseBean.code}" style="display: none;" />
                 <h:inputTextarea id="exerciseInputTextarea" rendered ="true" value="#{checkExerciseBean.exercise}" style="display: none;" />
