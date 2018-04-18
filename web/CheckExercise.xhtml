@@ -76,9 +76,8 @@
                 <h:commandButton class="blue-button" action="#{checkExerciseBean.automaticCheck()}" value="Automatic Check" />
                 
         </div>
-        
-        <h:outputLabel class="container input-container-label" value="Program output will be displayed below"/>
         <div class="outputField" style="#{checkExerciseBean.outputStyle}">
+        <h:outputLabel class="container input-container-label" value="Program output will be displayed below"/>
         <h:inputTextarea class="yellow-border input-container container" onmouseover="textAreaAdjust(this)" style="background-color:lightgray; overflow: hidden" readonly="true" value ="#{checkExerciseBean.output}"/>
         </div>       
                 <!-- Hidden values for setting bean -->
