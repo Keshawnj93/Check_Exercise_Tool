@@ -58,9 +58,13 @@ public class CheckExerciseBean implements Serializable {
             //Write was unsuccessful
             output = s;
         }
+        
+        if (!sampleInput.isEmpty())inputStyle = "";
+        else inputStyle = "display:none;";
     }
 
     public void automaticCheck() {
+        String temp = sampleInput;
         ExerciseParser e = new ExerciseParser(exercise);
         e.setValues();
         ArrayList outputs = e.getOutput();
@@ -207,6 +211,10 @@ public class CheckExerciseBean implements Serializable {
             sampleInput = sampleIn;
 
         }
+        
+        sampleInput = temp;
+        if (!sampleInput.isEmpty())inputStyle = "";
+        else inputStyle = "display:none;";
     }
 
     public void changeExercise() {
@@ -232,14 +240,18 @@ public class CheckExerciseBean implements Serializable {
                     + "For integers, use int unless it is explicitly stated as long. */";
             visible = true;
             sampleInput = "";
-            for (String s : e.getInput()) {
-                //Avoid putting space on first input
-                if (sampleInput.isEmpty()) {
-                    sampleInput = s;
-                } else {
-                    sampleInput += " " + s; 
-                }
+            ArrayList<String> s = e.getInput();
+            if (!s.isEmpty()){
+                sampleInput = s.get(0);
             }
+//            for (String s : e.getInput()) {
+//                //Avoid putting space on first input
+//                if (sampleInput.isEmpty()) {
+//                    sampleInput = s;
+//                } else {
+//                    sampleInput += " " + s; 
+//                }
+//            }
             
             if (sampleInput.isEmpty()) setInputStyle("display:none;");
             else setInputStyle("");
