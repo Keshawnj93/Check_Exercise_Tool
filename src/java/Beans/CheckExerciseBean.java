@@ -25,7 +25,7 @@ public class CheckExerciseBean implements Serializable {
         //Hide the input and output box originally
         inputStyle="display:none;";
         outputStyle="display:none;";
-        //changeExercise();
+        changeExercise();
     }
 
     public void compileAndRun() {
@@ -117,8 +117,9 @@ public class CheckExerciseBean implements Serializable {
                                 c.setOutput("");
                                 
                                 c.write(); c.compile();
-                                output = format("Your program is incorrect\r\n\r\nYour Output\r\n" + output
-                                        + "\r\n\r\nExpected Output\r\n" + c.run());
+                                String correct = highlightDiff(c.run());
+                                output = format("Your program is incorrect<br /><br /><font color=\"red\">Your Output</font><br />" + output
+                                        + "<br /><br /><font color=\"red\">Expected Output</font><br />" + correct);
                             } 
 
                             //Program is correct
@@ -185,8 +186,9 @@ public class CheckExerciseBean implements Serializable {
                                 c.setOutput("");
                                 
                                 c.write(); c.compile();
-                                output = format("Your program is incorrect\r\n\r\nYour Output\r\n" + output
-                                        + "\r\n\r\nExpected Output\r\n" + c.run());
+                                String correct = highlightDiff(c.run());
+                                output = format("Your program is incorrect<br /><br /><font color=\"red\">Your Output</font><br />" + output
+                                        + "<br /><br /><font color=\"red\">Expected Output</font><br />" + correct);
                                 break;
                             } //Program is correct
                             else {
@@ -257,9 +259,33 @@ public class CheckExerciseBean implements Serializable {
             else setInputStyle("");
         }
     }
+    
+    public String highlightDiff(String correct){
+        boolean cont = true;
+        try{
+            for (int i = 0; i < correct.length() && cont; i++){
+                //Not the same character. Difference
+                if (output.charAt(i) != correct.charAt(i)){
+                    //color user output red
+                    if (i < 1) output = "<font color=\"red\">" + output.charAt(i) + "</font>" + output.substring(i + 1);
+                    else output = output.substring(0, i) + "<font color=\"red\">" + output.charAt(i) + "</font>" + output.substring(i + 1);
+                    
+                    //color correct output red
+                    if (i < 1) correct = "<font color=\"red\">" + correct.charAt(i) + "</font>" + correct.substring(i + 1);
+                    else correct = correct.substring(0, i) + "<font color=\"red\">" + correct.charAt(i) + "</font>" + correct.substring(i + 1);
+                    
+                    cont = false;
+                }
+            }
+        } catch (IndexOutOfBoundsException e){
+            //
+        }
+        
+        return correct;
+    }
 
     public String format(String s) {
-        return s.replace("#", "\r\n");
+        return s.replace("#", "<br />");
     }
 
     public String getChapter() {

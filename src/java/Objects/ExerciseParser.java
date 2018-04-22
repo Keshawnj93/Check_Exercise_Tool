@@ -125,7 +125,7 @@ public class ExerciseParser {
         String s, ret = "";
         //Set Exersise Description
         String dir = "C:\\ags10e\\correctanswers\\";
-        String path = dir + exercise + ".txt"; 
+        String path = dir + exercise + ".java"; 
         try{
             br = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
             while((s = br.readLine()) != null){

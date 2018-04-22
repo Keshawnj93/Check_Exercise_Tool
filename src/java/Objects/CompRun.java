@@ -64,7 +64,7 @@ public class CompRun {
             } catch(IOException x){
                 //
             }
-            return "Error writing file:\r\n" + e.toString();
+            return "Error writing file:<br />" + format(e.toString());
         } finally{
             try{
                 if (bw != null){
@@ -96,7 +96,7 @@ public class CompRun {
                 //setMessage(pro.getErrorStream(), "output");
                 //setMessage(pro.getErrorStream(), "errStream");
                 pro.waitFor();
-                return "The program could not be compiled\r\n" + errStream;
+                return "The program could not be compiled<br />" + format(errStream);
             }
             
             else{
@@ -150,7 +150,7 @@ public class CompRun {
                     if (!isFinished){
                         pro1.destroy();
                         isInfiniteLoop = true;
-                        output = "Error: Infinite loop detected\r\n";
+                        output = "Error: Infinite loop detected<br />";
                     }
                 }
             }.start();
@@ -164,7 +164,7 @@ public class CompRun {
             //If an error exists, return the error
             if (hasError(pro.getErrorStream())){
                 pro.waitFor();
-                return "RunTime Error:\r\n" + errStream;
+                return "RunTime Error:<br />" + format(errStream);
             }
             
             //Return the InputStream (stdout) of the program
@@ -221,6 +221,10 @@ public class CompRun {
             return true;
         }
         return false;
+    }
+    
+    public String format(String s) {
+        return s.replace("\n", "<br />");
     }
     
     //Getters and Setters
